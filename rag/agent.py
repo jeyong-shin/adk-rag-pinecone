@@ -13,7 +13,7 @@ PINECONE_NAMESPACE = "2024_covid19"
 
 pinecone_tool = PineconeIndexRetrieval(
     name="pinecone_retrieval_tool",
-    description='This tool retrieves data from the pinecone vector database, using "query" text input.',
+    description='This tool retrieves data from the pinecone vector database specialized in COVID-19 manuals.',
     index_name=os.environ.get("PINECONE_INDEX_NAME"),
     namespace=PINECONE_NAMESPACE,
     pinecone=Pinecone(),
