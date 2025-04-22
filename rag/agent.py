@@ -1,15 +1,21 @@
+import os
+from dotenv import load_dotenv
+
 from google.adk.agents import Agent
 from openai import OpenAI
 from pinecone import Pinecone
 
 from .tools.tools import PineconeIndexRetrieval
 
+load_dotenv()
+
+PINECONE_NAMESPACE = "2024_covid19"
 
 pinecone_tool = PineconeIndexRetrieval(
     name="pinecone_retrieval_tool",
     description='This tool retrieves data from the pinecone vector database, using "query" text input.',
-    index_name="adk-rag-index",
-    namespace="2024_covid19",
+    index_name=os.environ.get("PINECONE_INDEX_NAME"),
+    namespace=PINECONE_NAMESPACE,
     pinecone=Pinecone(),
     openai_client=OpenAI(),
     top_k=5,
