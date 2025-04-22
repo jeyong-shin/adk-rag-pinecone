@@ -41,7 +41,7 @@ rag-adk-pinecone/
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/rag-adk-pinecone.git
+   git clone https://github.com/jeyong-shin/rag-adk-pinecone.git
    cd rag-adk-pinecone
    ```
 
