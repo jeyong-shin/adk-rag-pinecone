@@ -20,6 +20,7 @@ pinecone_tool = PineconeIndexRetrieval(
     namespace=PINECONE_NAMESPACE,
     pinecone=Pinecone(),
     openai_client=OpenAI(),
+    openai_embedding_model="text-embedding-3-large",
     top_k=5,
 )
 

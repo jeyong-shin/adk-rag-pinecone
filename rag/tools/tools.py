@@ -22,6 +22,7 @@ class PineconeIndexRetrieval(BaseRetrievalTool):
         index_name: str,
         namespace: str,
         openai_client: OpenAI,
+        openai_embedding_model="text-embedding-3-large",
         top_k: int = 10,
     ):
         super().__init__(name=name, description=description)
@@ -30,11 +31,12 @@ class PineconeIndexRetrieval(BaseRetrievalTool):
         self.index_name = index_name
         self.namespace = namespace
         self.openai = openai_client
+        self.openai_embedding_model = openai_embedding_model
         self.top_k = top_k
 
     def _get_embedding(self, text: str) -> list[float]:
         embedding = self.openai.embeddings.create(
-            model="text-embedding-3-large", input=text
+            model=self.openai_embedding_model, input=text
         )
         return embedding.data[0].embedding
 
