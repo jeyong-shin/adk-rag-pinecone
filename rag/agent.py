@@ -9,18 +9,22 @@ from .tools.tools import PineconeIndexRetrieval
 
 load_dotenv()
 
-PINECONE_NAMESPACE = os.environ.get("PINECONE_NAMESPACE")
-if not PINECONE_NAMESPACE:
-    raise ValueError("PINECONE_NAMESPACE environment variable is not set.")
+openai = OpenAI()
+
+def get_embedding(text: str) -> list[float]:
+    embedding = openai.embeddings.create(
+        model="text-embedding-3-large", input=text
+    )
+    return embedding.data[0].embedding
+
 
 pinecone_tool = PineconeIndexRetrieval(
     name="pinecone_retrieval_tool",
     description='This tool retrieves data from the pinecone vector database.',
     index_name=os.environ.get("PINECONE_INDEX_NAME"),
-    namespace=PINECONE_NAMESPACE,
+    namespace=os.environ.get("PINECONE_NAMESPACE"),
     pinecone=Pinecone(),
-    openai_client=OpenAI(),
-    openai_embedding_model="text-embedding-3-large",
+    embedder=get_embedding,
     top_k=5,
 )
 

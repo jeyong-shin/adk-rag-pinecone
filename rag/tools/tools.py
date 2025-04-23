@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, override
+from typing import Any, Callable, override
 
 from google.adk.tools.retrieval.base_retrieval_tool import BaseRetrievalTool
 from google.adk.tools.tool_context import ToolContext
@@ -21,24 +21,18 @@ class PineconeIndexRetrieval(BaseRetrievalTool):
         pinecone: Pinecone,
         index_name: str,
         namespace: str,
-        openai_client: OpenAI,
-        openai_embedding_model: str = "text-embedding-3-large",
+        embedder: Callable[[str], list[float]],
         top_k: int = 10,
+        key_text: str = "text",
     ):
         super().__init__(name=name, description=description)
         self.pinecone = pinecone
         self.index = self.pinecone.Index(index_name)
         self.index_name = index_name
         self.namespace = namespace
-        self.openai = openai_client
-        self.openai_embedding_model = openai_embedding_model
+        self.embedder = embedder
         self.top_k = top_k
-
-    def _get_embedding(self, text: str) -> list[float]:
-        embedding = self.openai.embeddings.create(
-            model=self.openai_embedding_model, input=text
-        )
-        return embedding.data[0].embedding
+        self.key_text = key_text
 
     @override
     async def run_async(
@@ -49,7 +43,7 @@ class PineconeIndexRetrieval(BaseRetrievalTool):
         if not query:
             raise ValueError("Query is required")
 
-        vector = self._get_embedding(query)
+        vector = self.embedder(query)
 
         results = self.index.query(
             vector=vector,
@@ -58,4 +52,4 @@ class PineconeIndexRetrieval(BaseRetrievalTool):
             include_metadata=True,
         )
 
-        return [result["metadata"]["text"] for result in results["matches"]]
+        return [result["metadata"][self.key_text] for result in results["matches"]]
