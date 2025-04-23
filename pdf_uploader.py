@@ -49,45 +49,45 @@ def embed_and_upsert(chunks: List[str], namespace: str):
             "metadata": metadata[i] | {"text": text},
         }
 
-    print("🧠 Embedding 병렬 처리 시작...")
+    print("🧠 Embedding parallel processing...")
     vectors = []
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = [executor.submit(embed_one, i) for i in range(len(texts))]
         for future in as_completed(futures):
             vectors.append(future.result())
 
-    print(f"🔌 Pinecone에 연결 중...")
+    print(f"🔌 Connecting to Pinecone...")
     pc = Pinecone(api_key=PINECONE_API_KEY)
     index = pc.Index(name=PINECONE_INDEX_NAME)
 
-    print(f"📤 {len(vectors)}개의 벡터 업서트 중...")
+    print(f"📤 Upserting {len(vectors)} vector(s)...")
     index.upsert(vectors=vectors, namespace=namespace)
-    print(f"✅ 업서트 완료! namespace = '{namespace}'")
+    print(f"✅ Upsert complete! namespace = '{namespace}'")
 
 
 def main():
     if len(sys.argv) != 3:
-        print("사용법: python pdf_uploader.py [파일경로] [업서트할 네임스페이스]")
+        print("Usage: python pdf_uploader.py /path/to/your/file.pdf your_namespace")
         return
 
     file_path = sys.argv[1]
     if not os.path.exists(file_path):
-        print(f"❌ 파일이 존재하지 않습니다: {file_path}")
+        print(f"❌ File does not exist: {file_path}")
         return
 
     namespace = sys.argv[2]
     if not re.match(r"^[a-zA-Z0-9_-]+$", namespace):
         print(
-            "❌ 네임스페이스는 알파벳, 숫자, 언더스코어(_) 및 하이픈(-)만 포함할 수 있습니다."
+            "❌ Namespace can only conatin alphabet, numbers, _, and -."
         )
         return
 
-    print(f"📄 PDF 로딩: {file_path}")
+    print(f"📄 Loading pdf: {file_path}")
     chunks = load_pdf_chunks(file_path)
-    print(f"🔗 Chunk 개수: {len(chunks)}")
+    print(f"🔗 Number of chunks: {len(chunks)}")
 
     if len(chunks) == 0:
-        print("❌ PDF에서 추출된 chunk가 없습니다.")
+        print("❌ No chunk is extracted from pdf.")
         return
 
     embed_and_upsert(chunks, namespace)
