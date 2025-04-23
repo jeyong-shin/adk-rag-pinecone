@@ -77,9 +77,7 @@ def main():
 
     namespace = sys.argv[2]
     if not re.match(r"^[a-zA-Z0-9_-]+$", namespace):
-        print(
-            "❌ Namespace can only conatin alphabet, numbers, _, and -."
-        )
+        print("❌ Namespace can only conatin alphabet, numbers, _, and -.")
         return
 
     print(f"📄 Loading pdf: {file_path}")

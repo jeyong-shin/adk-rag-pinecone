@@ -4,7 +4,6 @@ from typing import Any, Callable, override
 
 from google.adk.tools.retrieval.base_retrieval_tool import BaseRetrievalTool
 from google.adk.tools.tool_context import ToolContext
-from openai import OpenAI
 from pinecone import Pinecone
 
 

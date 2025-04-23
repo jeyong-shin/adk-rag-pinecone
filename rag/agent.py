@@ -1,6 +1,6 @@
 import os
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 from google.adk.agents import Agent
 from openai import OpenAI
 from pinecone import Pinecone
@@ -11,16 +11,15 @@ load_dotenv()
 
 openai = OpenAI()
 
+
 def get_embedding(text: str) -> list[float]:
-    embedding = openai.embeddings.create(
-        model="text-embedding-3-large", input=text
-    )
+    embedding = openai.embeddings.create(model="text-embedding-3-large", input=text)
     return embedding.data[0].embedding
 
 
 pinecone_tool = PineconeIndexRetrieval(
     name="pinecone_retrieval_tool",
-    description='This tool retrieves data from the pinecone vector database.',
+    description="This tool retrieves data from the pinecone vector database.",
     index_name=os.environ.get("PINECONE_INDEX_NAME"),
     namespace=os.environ.get("PINECONE_NAMESPACE"),
     pinecone=Pinecone(),
