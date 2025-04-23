@@ -22,7 +22,7 @@ class PineconeIndexRetrieval(BaseRetrievalTool):
         index_name: str,
         namespace: str,
         openai_client: OpenAI,
-        openai_embedding_model="text-embedding-3-large",
+        openai_embedding_model: str = "text-embedding-3-large",
         top_k: int = 10,
     ):
         super().__init__(name=name, description=description)
